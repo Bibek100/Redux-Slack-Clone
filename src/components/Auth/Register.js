@@ -22,7 +22,7 @@ class Register extends React.Component {
     usersRef: firebase.database().ref("users"),
   };
 
-  isFormValid = (values) => {
+  isFormValid = () => {
     let errors = [];
     let error;
     if (this.isFormEmpty(this.state)) {
@@ -91,13 +91,21 @@ class Register extends React.Component {
             });
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
           this.setState({
             errors: this.state.errors.concat(err),
             loading: false,
           });
         });
     }
+  };
+
+  saveUser = (createdUser) => {
+    // usersRef references all the collection of users that user will be added to
+    return this.state.usersRef.child(createdUser.user.uid).set({
+      name: createdUser.user.displayName,
+      avatar: createdUser.user.photoURL,
+    });
   };
   saveUser = (createdUser) => {
     // usersRef references all the collection of users that user will be added to
