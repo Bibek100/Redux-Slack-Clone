@@ -118,22 +118,33 @@ class Register extends React.Component {
 
   render() {
     const {
+      username,
       email,
       password,
-
+      passwordConfirmation,
       errors,
       loading,
     } = this.state;
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as="h2" icon color="violet" textAlign="center">
-            <Icon name="puzzle piece" color="violet" />
-            Lofin for SlackChat
+          <Header as="h2" icon color="orange" textAlign="center">
+            <Icon name="puzzle piece" color="orange" />
+            Register for SlackChat
           </Header>
 
           <Form size="large" onSubmit={this.handleSubmit}>
             <Segment stacked>
+              <Form.Input
+                fluid
+                name="username"
+                icon="user"
+                iconPosition="left"
+                placeholder="Username"
+                value={username}
+                onChange={this.handleChange}
+                type="text"
+              />
               <Form.Input
                 fluid
                 name="email"
@@ -156,10 +167,23 @@ class Register extends React.Component {
                 className={this.handleInputError(errors, "password")}
                 type="password"
               />
-
+              <Form.Input
+                fluid
+                name="passwordConfirmation"
+                icon="repeat"
+                iconPosition="left"
+                placeholder="PasswordConfirmation"
+                value={passwordConfirmation}
+                className={this.handleInputError(
+                  errors,
+                  "passwordConfirmation"
+                )}
+                onChange={this.handleChange}
+                type="password"
+              />
               <Button
                 className={loading ? "loading" : ""}
-                color="violet"
+                color="orange"
                 fluid
                 size="large"
               >
@@ -174,8 +198,8 @@ class Register extends React.Component {
             </Message>
           )}
           <Message>
-            Dont Have an account?
-            <Link to="/login">Register</Link>
+            Already a User?
+            <Link to="/login">Login</Link>
           </Message>
         </Grid.Column>
       </Grid>
