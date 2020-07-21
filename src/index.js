@@ -12,15 +12,23 @@ import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 import "semantic-ui-css/semantic.min.css";
 import firebase from "./firebase";
+import { createStore } from "redux";
+import { Provider } from "react-redux";
+import { composeWithdevTools } from "redux-devtools-extension";
+
+const store = createStore(() => {}, composeWithdevTools);
 
 class Root extends React.Component {
   componentDidMount() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        console.log(user);
+
         this.props.history.push("/");
       }
     });
   }
+  setUser = () => {};
   render() {
     return (
       <Switch>
@@ -33,11 +41,17 @@ class Root extends React.Component {
 }
 
 const RootWithAuth = withRouter(Root);
+//wrapped root component with the withrouter
+//that is high-order component so that we can make history
+//object available to our component that lead us to use the functionality of push
+//so that we can access route components
 
 ReactDOM.render(
-  <Router>
-    <RootWithAuth />
-  </Router>,
+  <Provider store={store}>
+    <Router>
+      <RootWithAuth />
+    </Router>
+  </Provider>,
 
   document.getElementById("root")
 );
