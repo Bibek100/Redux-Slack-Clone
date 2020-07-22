@@ -13,3 +13,12 @@ export const clearUser = (user) => {
     type: actiontypes.CLEAR_USER,
   };
 };
+
+export const setCurrentChannel = (channel) => {
+  return {
+    type: actiontypes.SET_CURRENT_CHANNEL,
+    payload: {
+      currentChannel: channel,
+    },
+  };
+};
