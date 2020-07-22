@@ -13,24 +13,31 @@ import Register from "./components/Auth/Register";
 import "semantic-ui-css/semantic.min.css";
 import firebase from "./firebase";
 import { createStore } from "redux";
-import { Provider } from "react-redux";
-import { composeWithdevTools } from "redux-devtools-extension";
+import { Provider, connect } from "react-redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+import rootReducer from "./Reducers";
+import { setUser } from "./actions";
+import Spinner from "./components/Spinner";
 
-const store = createStore(() => {}, composeWithdevTools);
+const store = createStore(rootReducer, composeWithDevTools());
 
 class Root extends React.Component {
   componentDidMount() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         console.log(user);
+        console.log(this.props.isLoading);
+        this.props.setUser(user);
 
         this.props.history.push("/");
       }
     });
   }
-  setUser = () => {};
+
   render() {
-    return (
+    return this.props.isLoading ? (
+      <Spinner />
+    ) : (
       <Switch>
         <Route exact path="/" component={App} />
         <Route path="/login" component={Login} />
@@ -40,7 +47,11 @@ class Root extends React.Component {
   }
 }
 
-const RootWithAuth = withRouter(Root);
+const mapStateFromProps = (state) => ({
+  isLoading: state.user.isLoading,
+});
+
+const RootWithAuth = withRouter(connect(mapStateFromProps, { setUser })(Root));
 //wrapped root component with the withrouter
 //that is high-order component so that we can make history
 //object available to our component that lead us to use the functionality of push
