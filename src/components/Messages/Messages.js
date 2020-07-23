@@ -54,11 +54,13 @@ class Messages extends React.Component {
       this.setState({ progressBar: true });
     }
   };
+  displayChannelName = (channel) => (channel ? `#${channel.name}` : "");
+
   render() {
     const { messages, messagesRef, channel, user, progressBar } = this.state;
     return (
       <React.Fragment>
-        <MessagesHeader />
+        <MessagesHeader channelName={this.displayChannelName(channel)} />
         <Segment>
           <Comment.Group
             className={progressBar ? "message__progress" : "messages"}
