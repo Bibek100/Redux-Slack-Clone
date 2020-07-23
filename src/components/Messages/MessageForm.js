@@ -27,45 +27,47 @@ class MessageForm extends React.Component {
     return message;
   };
   sendMessage = () => {
-    const { messageRef } = this.props;
-    const { message } = this.state;
+    const { messagesRef } = this.props;
+    const { message, channel, errors } = this.state;
 
     if (message) {
       this.setState({ loading: true });
-      messageRef
+      messagesRef
         .child(channel.id)
-        .push()
+        .push() // push onto messagesRef
         .set(this.createMessage())
         .then(() => {
-          this.setState({
-            loading: false,
-            message: "",
-            errors: [],
-          });
+          this.setState({ loading: false, message: "", errors: [] });
         })
         .catch((err) => {
-          console.log(err);
-          thisstate({
+          console.error(err);
+          this.setState({
             loading: false,
-            errors: this.state.errors.concat(err),
+            errors: errors.concat(err),
           });
         });
     } else {
       this.setState({
-        errors: this.state.errors.concat({ message: "Add a mesage" }),
+        errors: this.state.errors.concat({ message: "Add a message." }),
       });
     }
   };
   render() {
-    const { errors } = this.state;
+    const { errors, message, loading } = this.state;
     return (
       <Segment className="message__form">
         <Input
           fluid
+          value={message}
           name="message"
           onChange={this.handleChange}
           style={{ marginBottom: "0.7em" }}
           label={<Button icon={"add"} />}
+          className={
+            errors.some((error) => error.message.includes("message"))
+              ? "error"
+              : ""
+          }
           labelPosition="left"
           placeholder="Write your messages"
         />
@@ -73,11 +75,9 @@ class MessageForm extends React.Component {
           <Button
             onClick={this.sendMessage}
             color="orange"
+            disabled={loading}
             content="Add Reply"
             labelPosition="left"
-            className={errors.some((error) =>
-              error.message.includes("messaage") ? "error" : ""
-            )}
             icon="edit"
           />
           <Button
