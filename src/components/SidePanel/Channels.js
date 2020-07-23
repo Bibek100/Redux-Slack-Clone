@@ -6,16 +6,21 @@ import { connect } from "react-redux";
 import { setCurrentChannel } from "../../actions";
 class Channels extends React.Component {
   state = {
+    activechannel: "",
     channels: [],
     channelName: "",
     channelDetails: "",
     channelsRef: firebase.database().ref("channels"),
     modal: false,
     user: this.props.currentUser,
+    firstLoad: true,
   };
 
   componentDidMount = () => {
     this.addListeners();
+  };
+  componentWillUnmount = () => {
+    this.removeListeners();
   };
 
   addListeners = () => {
@@ -23,8 +28,21 @@ class Channels extends React.Component {
     this.state.channelsRef.on("child_added", (snap) => {
       loadedChannels.push(snap.val());
       console.log(loadedChannels);
-      this.setState({ channels: loadedChannels });
+      this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
     });
+  };
+
+  removeListeners = () => {
+    this.state.channelsRef.off();
+  };
+
+  setFirstChannel = () => {
+    const firstChannel = this.state.channels[0];
+    if (this.state.firstLoad && this.state.channels.length > 0) {
+      this.props.setCurrentChannel(firstChannel);
+      this.setActiveChannel(firstChannel);
+    }
+    this.setState({ firstLoad: false });
   };
 
   addchannel = () => {
@@ -82,6 +100,7 @@ class Channels extends React.Component {
           key={channel.id}
           onClick={() => this.changeChannel(channel)}
           name={channel.name}
+          active={channel.id === this.state.activechannel}
         >
           # {channel.name}
         </Menu.Item>
@@ -90,7 +109,12 @@ class Channels extends React.Component {
   };
 
   changeChannel = (channel) => {
+    this.setActiveChannel(channel);
     this.props.setCurrentChannel(channel);
+  };
+
+  setActiveChannel = (channel) => {
+    this.setState({ activechannel: channel.id });
   };
   render() {
     const { channels, modal } = this.state;
