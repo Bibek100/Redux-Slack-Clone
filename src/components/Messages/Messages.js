@@ -1,9 +1,10 @@
 import React from "react";
 import firebase from "../../firebase";
 
-import { Segment, Comment, Message } from "semantic-ui-react";
+import { Segment, Comment } from "semantic-ui-react";
 import MessagesHeader from "./MessagesHeader";
 import MessageForm from "./MessageForm";
+import Message from "./Message";
 
 class Messages extends React.Component {
   state = {
