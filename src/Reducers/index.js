@@ -32,6 +32,11 @@ const channel_reducer = (state = initialChannelState, action) => {
       return {
         currentChannel: action.payload.currentChannel,
       };
+    case actiontypes.SET_PRIVATE_CHANNEL:
+      return {
+        ...state,
+        isPrivateChannel: action.payload.isPrivateChannel,
+      };
 
     default:
       return state;

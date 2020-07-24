@@ -28,6 +28,7 @@ class Channels extends React.Component {
     this.state.channelsRef.on("child_added", (snap) => {
       loadedChannels.push(snap.val());
       console.log(loadedChannels);
+      console.log(snap.key);
       this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
     });
   };
