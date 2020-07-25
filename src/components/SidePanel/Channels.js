@@ -34,12 +34,6 @@ class Channels extends React.Component {
   componentWillUnmount = () => {
     this.removeListeners();
   };
-  removeListeners = () => {
-    this.state.channelsRef.off();
-    this.state.channels.forEach((channel) => {
-      this.state.messagesRef.child(channel.id).off();
-    });
-  };
 
   addListeners = () => {
     let loadedChannels = [];
@@ -70,14 +64,15 @@ class Channels extends React.Component {
     let index = notifications.findIndex(
       (notification) => notification.id === channelId
     );
+    console.log(index);
 
     if (index !== -1) {
       if (channelId !== currentChannelId) {
         lastTotal = notifications[index].total;
-
         if (snap.numChildren() - lastTotal > 0) {
           notifications[index].count = snap.numChildren() - lastTotal;
         }
+        console.log(notifications[index].count);
       }
       notifications[index].lastKnownTotal = snap.numChildren();
     } else {
@@ -90,6 +85,7 @@ class Channels extends React.Component {
     }
 
     this.setState({ notifications });
+    console.log(notifications);
   };
   removeListeners = () => {
     this.state.channelsRef.off();
@@ -100,6 +96,7 @@ class Channels extends React.Component {
     if (this.state.firstLoad && this.state.channels.length > 0) {
       this.props.setCurrentChannel(firstChannel);
       this.setActiveChannel(firstChannel);
+      this.setState({ channel: firstChannel });
     }
     this.setState({ firstLoad: false });
   };
@@ -160,7 +157,7 @@ class Channels extends React.Component {
           onClick={() => this.changeChannel(channel)}
           name={channel.name}
           style={{ opacity: 0.7 }}
-          active={channel.id === this.state.activeChannel}
+          active={channel.id === this.state.activechannel}
         >
           {this.getNotificationCount(channel) && (
             <Label color="red">{this.getNotificationCount(channel)}</Label>
@@ -210,9 +207,7 @@ class Channels extends React.Component {
       }
     });
 
-    if (count > 0) {
-      return count;
-    }
+    if (count > 0) return count;
   };
   render() {
     const { channels, modal } = this.state;
