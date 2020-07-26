@@ -134,8 +134,9 @@ class Messages extends React.Component {
         />
         <Segment>
           <Comment.Group
-            className={progressBar ? "message__progress" : "messages"}
+            className={progressBar ? "messages__progress" : "messages"}
           >
+            s
             {searchTerm
               ? this.displayMessages(searchResults)
               : this.displayMessages(messages)}

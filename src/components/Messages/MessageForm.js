@@ -1,5 +1,5 @@
 import React from "react";
-import { Segment, Button, Input, Icon } from "semantic-ui-react";
+import { Segment, Button, Input, Icon, Form } from "semantic-ui-react";
 import firebase from "../../firebase";
 import FileModal from "./FileModal";
 import { v4 as uuidv4 } from "uuid";
@@ -148,39 +148,45 @@ class MessageForm extends React.Component {
     } = this.state;
     return (
       <Segment className="message__form">
-        <Input
-          fluid
-          value={message}
-          name="message"
-          onChange={this.handleChange}
-          style={{ marginBottom: "0.7em" }}
-          label={<Button icon={"add"} />}
-          className={
-            errors.some((error) => error.message.includes("message"))
-              ? "error"
-              : ""
-          }
-          labelPosition="left"
-          placeholder="Write your messages"
-        />
-        <Button.Group icon widths="2">
-          <Button
-            onClick={this.sendMessage}
-            color="orange"
-            disabled={loading}
-            content="Add Reply"
+        <Form onSubmit={this.sendMessage}>
+          <Input
+            fluid
+            value={message}
+            name="message"
+            onChange={this.handleChange}
+            style={{ marginBottom: "0.7em" }}
+            label={<Button icon={"add"} />}
+            className={
+              errors.some((error) => error.message.includes("message"))
+                ? "error"
+                : ""
+            }
             labelPosition="left"
-            icon="edit"
+            placeholder="Write your messages"
           />
-          <Button
-            color="teal"
-            disabled={uploadState === "uploading"}
-            onClick={this.openModal}
-            content="Upload Media"
-            labelPosition="right"
-            icon="cloud upload"
-          />
-        </Button.Group>
+
+          <Button.Group icon widths="2">
+            <Button
+              type="submit"
+              onClick={this.sendMessage}
+              color="orange"
+              disabled={loading}
+              content="Add Reply"
+              labelPosition="left"
+              icon="edit"
+            />
+            <Button
+              type="button"
+              color="teal"
+              disabled={uploadState === "uploading"}
+              onClick={this.openModal}
+              content="Upload Media"
+              labelPosition="right"
+              icon="cloud upload"
+            />
+          </Button.Group>
+        </Form>
+
         <FileModal
           uploadFile={this.uploadFile}
           modal={modal}
