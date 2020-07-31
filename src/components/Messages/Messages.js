@@ -13,6 +13,7 @@ class Messages extends React.Component {
     privateMessagesRef: firebase.database().ref("privateMessages"),
     channel: this.props.currentChannel,
     user: this.props.currentUser,
+    usersRef: firebase.database().ref("users"),
     messagesLoading: true,
     messages: [],
     progressBar: false,
@@ -27,6 +28,7 @@ class Messages extends React.Component {
     const { channel, user } = this.state;
     if (channel && user) {
       this.addListeners(channel.id);
+      this.addUserStarsListeners(channel.id, user.uid);
     }
   }
 
@@ -45,7 +47,19 @@ class Messages extends React.Component {
       this.countUniqueUsers(loadedMessages);
     });
   };
-
+  addUserStarsListeners = (channelId, userId) => {
+    this.state.usersRef
+      .child(userId)
+      .child("starred")
+      .once("value")
+      .then((data) => {
+        if (data.val() !== null) {
+          const channelIds = Object.keys(data.val());
+          const prevStarred = channelIds.includes(channelId);
+          this.setState({ isChannelStarred: prevStarred });
+        }
+      });
+  };
   getMessagesRef = () => {
     const { messagesRef, privateMessagesRef, privateChannel } = this.state;
     return privateChannel ? privateMessagesRef : messagesRef;
@@ -61,8 +75,27 @@ class Messages extends React.Component {
 
   starChannel = () => {
     if (this.state.isChannelStarred) {
+      this.state.usersRef.child(`${this.state.user.uid}/starred`).update({
+        [this.state.channel.id]: {
+          name: this.state.channel.name,
+          details: this.state.channel.details,
+          createdBy: {
+            name: this.state.channel.createdBy.name,
+            avatar: this.state.channel.createdBy.avatar,
+          },
+        },
+      });
       console.log("star");
     } else {
+      this.state.usersRef
+        .child(`${this.state.user.uid}/starred`)
+        .child(this.state.channel.id)
+        .remove((err) => {
+          if (err !== null) {
+            console.log(err);
+          }
+        });
+
       console.log("ustar");
     }
   };
