@@ -16,11 +16,11 @@ class MetaPanel extends React.Component {
 
   render() {
     const { activeIndex, privateChannel, channel } = this.state;
-    if (privateChannel || !channel) return null;
+    if (privateChannel) return null;
     return (
-      <Segment>
+      <Segment loading={!channel}>
         <Header as="h3" attached="top">
-          About #{channel.name}
+          About #{channel && channel.name}
         </Header>
         <Accordion styled attached="true">
           <Accordion.Title
@@ -33,7 +33,7 @@ class MetaPanel extends React.Component {
             Channel Details
           </Accordion.Title>
           <Accordion.Content active={activeIndex === 0}>
-            {channel.details}
+            {channel && channel.details}
           </Accordion.Content>
           <Accordion.Title
             active={activeIndex === 1}
@@ -49,7 +49,7 @@ class MetaPanel extends React.Component {
           </Accordion.Content>
           <Accordion.Title
             active={activeIndex === 2}
-            index={1}
+            index={2}
             onClick={this.setActiveIndex}
           >
             <Icon name="dropdown" />
@@ -57,8 +57,10 @@ class MetaPanel extends React.Component {
             Created by
           </Accordion.Title>
           <Accordion.Content active={activeIndex === 2}>
-            <Image src={channel.createdBy.avatar} />
-            {channel.createdBy.name}
+            <Header as="h3">
+              <Image circular src={channel && channel.createdBy.avatar} />
+              {channel && channel.createdBy.name}
+            </Header>
           </Accordion.Content>
         </Accordion>
       </Segment>
